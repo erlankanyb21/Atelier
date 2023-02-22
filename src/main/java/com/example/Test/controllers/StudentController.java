@@ -20,9 +20,18 @@ public class StudentController {
         return studentService.list();
     }
 
-
     @PostMapping(path = "item")
     public void add(@RequestBody  Student student) {
         studentService.add(student);
     }
+
+    @DeleteMapping(path = "item/{studentId}")
+    public void delete(@PathVariable Long studentId) {
+        studentService.delete(studentId);
+    }
+    @PutMapping(path = "item")
+    public void update(@RequestBody Student student) {
+        studentService.update(student);
+    }
+
 }

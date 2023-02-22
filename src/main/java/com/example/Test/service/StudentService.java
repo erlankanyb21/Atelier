@@ -1,23 +1,51 @@
 package com.example.Test.service;
 
 import com.example.Test.models.Student;
+import com.example.Test.repository.StudentRepository;
+import com.example.Test.response.RestApiException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
+
+    public final StudentRepository studentRepository;
+
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
     public List<Student> list() {
-        return List.of(
-                new Student("Alex","Gladkov", LocalDate.of(2000, Month.APRIL,5)),
-                new Student("Dima","Habarov",LocalDate.of(2001,Month.AUGUST,4)),
-                new Student("Denis","Kabylov",LocalDate.of(2000,Month.JANUARY,7))
-        );
+        return studentRepository.findAll();
     }
 
     public void add(Student student) {
-        System.out.println(student);
+        if (studentRepository.findStudentByEmail(student.getEmail()).isPresent()){
+            throw new RestApiException("this email is already taken!");
+        }
+        studentRepository.save(student);
+    }
+
+    public void delete(Long studentId) {
+        studentRepository.deleteById(studentId);
+    }
+
+    public void update(Student student) {
+        Optional<Student> row = studentRepository.findById(student.getId());
+        if (row.isPresent()) {
+            Student item = row.get();
+            if (!student.getName().isEmpty()){
+                item.setName(student.getName());
+            }
+            if (!student.getSurname().isEmpty()){
+                item.setSurname(student.getSurname());
+            }
+            if (student.getDob() != null){
+                item.setDob(student.getDob());
+            }
+            studentRepository.save(item);
+        }
     }
 }
