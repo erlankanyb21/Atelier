@@ -49,6 +49,10 @@ public class Student {
         this.name = name;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public void setSurname(String surname) {
         this.surname = surname;
     }
